@@ -7,7 +7,9 @@ package de.felix.webserver.request;
  */
 public interface Function {
 
-    boolean canExecute(final Request request);
+    default boolean canExecute(final Request request) {
+        return true;
+    }
 
     void execute(final Request request);
 

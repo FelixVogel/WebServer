@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 
+import de.felix.webserver.request.FunctionManager;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.Connector;
@@ -59,13 +60,13 @@ public class WebServer {
 	private boolean running = false;
 
 	public WebServer() {
-		System.out.println("Running on " + System.getProperty("os.name") + " " + System.getProperty("os.arch"));
-
 		if(!System.getProperty("os.name").toLowerCase().matches(".*(nix|nux|aix|win).*")) {
 			System.err.println("Your OS is not Supported!");
 
 			System.exit(0);
 		}
+
+		System.out.println("Running on " + System.getProperty("os.name") + " " + System.getProperty("os.arch"));
 
 		config = new Configuration();
 		server = new Server();
@@ -81,6 +82,7 @@ public class WebServer {
 
 		running = true;
 
+		registerHandlers(new FunctionManager(config.functionPath));
 		createServer();
 
 		try {
@@ -165,7 +167,7 @@ public class WebServer {
 		}
 
 		// Applying the connectors to the Server
-		server.setConnectors(connectors.toArray(new Connector[connectors.size()]));
+		server.setConnectors(connectors.toArray(new Connector[0]));
 
 		final GzipHandler gzip = new GzipHandler();
 
@@ -243,11 +245,11 @@ public class WebServer {
 		return config;
 	}
 
-	final class ShutdownThread extends Thread {
+	static final class ShutdownThread extends Thread {
 
 		private final WebServer server;
 
-		public ShutdownThread(final WebServer server) {
+		ShutdownThread(final WebServer server) {
 			this.server = server;
 		}
 
@@ -283,18 +285,18 @@ public class WebServer {
 	 * @param handlerContainer A container class containing annotated {@link RequestHandler} methods
 	 */
 	public void registerHandlers(final PathHandler handlerContainer) {
-		final List<Method> methods = Arrays.asList(handlerContainer.getClass().getMethods()).stream().filter(m -> m.isAnnotationPresent(RequestHandler.class)).collect(Collectors.toList());
+		final List<Method> methods = Arrays.stream(handlerContainer.getClass().getMethods()).filter(m -> m.isAnnotationPresent(RequestHandler.class)).collect(Collectors.toList());
 
 		final Map<String, Map<RequestMethod, List<MethodContainer>>> sorted = new HashMap<>();
 
 		for(final Method m : methods) {
 			final RequestHandler rh = m.getAnnotation(RequestHandler.class);
-			final String pathSpec = handlerContainer.setPathPrefix() + rh.path();
+			final String pathSpec = (handlerContainer.setPathPrefix() + rh.path()).replace("//", "/");
 
 			if(sorted.get(pathSpec) == null) {
-				sorted.put(pathSpec, Util.initHandleMap());
+				sorted.put(pathSpec, Util.initMethodMap());
 
-				System.err.println("Init: `" + pathSpec + "`");
+				System.err.println("[WS] Init: `" + pathSpec + "`");
 			}
 
 			AuthenticationStrategy authenticationStrategy = null;
@@ -350,8 +352,8 @@ public class WebServer {
 
 	public static final class Configuration {
 
-		protected int timeout = 15, httpPort = 80, httpsPort = 443;
-		protected String sslFile, keystorepass, keymanagerpass, truststorepass;
+		int timeout = 15, httpPort = 80, httpsPort = 443;
+		String functionPath = "", sslFile, keystorepass, keymanagerpass, truststorepass;
 
 		public void setTimeout(final int timeout) {
 			this.timeout = timeout;
@@ -363,6 +365,10 @@ public class WebServer {
 
 		public void setHttpsPort(final int httpsPort) {
 			this.httpsPort = httpsPort;
+		}
+
+		public void setFunctionPath(final String functionPath) {
+			this.functionPath = functionPath;
 		}
 
 		public void setSSLFileLocation(final String sslFile) {

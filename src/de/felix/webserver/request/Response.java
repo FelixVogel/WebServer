@@ -9,6 +9,11 @@ import java.util.Locale;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 
+/**
+ * Represents a outgoing response
+ *
+ * @author Felix Vogel
+ */
 public interface Response {
 
 	void addCookie(Cookie cookie);

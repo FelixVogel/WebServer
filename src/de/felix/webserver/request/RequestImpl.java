@@ -29,7 +29,7 @@ import javax.servlet.http.Part;
 final class RequestImpl implements Request {
 
 	private final HttpServletRequest req;
-	private final Response resp;
+	private final ResponseImpl resp;
 
 	public RequestImpl(final HttpServletRequest req, final HttpServletResponse resp) {
 		this.req = req;
@@ -513,7 +513,7 @@ final class RequestImpl implements Request {
 		}
 
 		@Override
-		public void setCharacterEncoding(final String encoding) throws UnsupportedEncodingException {
+		public void setCharacterEncoding(final String encoding) {
 			resp.setCharacterEncoding(encoding);
 		}
 

@@ -25,6 +25,7 @@ import javax.servlet.http.Part;
 
 /**
  * This class represents a incoming request
+ *
  * @author Felix Vogel
  */
 public interface Request {

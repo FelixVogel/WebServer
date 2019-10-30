@@ -69,11 +69,7 @@ public final class MimeType {
 	public static String getMimeType(final File file) {
 		final String[] extensions = file.getName().split("\\.");
 
-		if(MIME_TYPES.containsKey(extensions[extensions.length - 1])) {
-			return MIME_TYPES.get(extensions[extensions.length - 1]);
-		} else {
-			return "application/octet-stream";
-		}
+		return MIME_TYPES.getOrDefault(extensions[extensions.length - 1], "application/octet-stream");
 	}
 
 }

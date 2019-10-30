@@ -7,6 +7,7 @@ import de.felix.webserver.request.Request;
  *
  * @author Felix Vogel
  */
+@Deprecated
 public class AAStrategy implements AuthenticationStrategy {
 
 	@Override

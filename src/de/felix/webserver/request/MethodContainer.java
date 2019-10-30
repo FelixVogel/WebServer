@@ -5,6 +5,9 @@ import java.lang.reflect.Method;
 
 import de.felix.webserver.auth.AuthenticationStrategy;
 
+/**
+ * @author Felix Vogel
+ */
 public class MethodContainer {
 
 	private final Object caller;
@@ -24,7 +27,7 @@ public class MethodContainer {
 
 		try {
 			method.invoke(caller, request);
-		} catch(IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+		} catch(final IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 	}

@@ -87,7 +87,7 @@ public final class Util {
 
 	// protected utility
 
-	protected static Map<RequestMethod, List<MethodContainer>> initHandleMap() {
+	protected static Map<RequestMethod, List<MethodContainer>> initMethodMap() {
 		final Map<RequestMethod, List<MethodContainer>> map = new HashMap<>(6);
 
 		// map.put(RequestMethod.ALL, new ArrayList<>());

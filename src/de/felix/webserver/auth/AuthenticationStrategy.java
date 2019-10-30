@@ -3,10 +3,13 @@ package de.felix.webserver.auth;
 import de.felix.webserver.request.Request;
 
 /**
+ * @deprecated Use {@link de.felix.webserver.request.Function} for processes that require authentication
+ *
  * A authentication strategy basically represents a way of authentication for a request to be executed
  *
  * @author Felix Vogel
  */
+@Deprecated
 public interface AuthenticationStrategy {
 
 	/**
