@@ -56,12 +56,12 @@ public final class FunctionManager implements PathHandler {
         handleFunction(request);
     }
 
-    @RequestHandler(path = "/func/*", method = RequestMethod.POST)
+    @RequestHandler(path = "/func/", method = RequestMethod.POST)
     public void handleFunctionPOST(final Request request) {
         handleFunction(request);
     }
 
-    @RequestHandler(path = "/func/*", method = RequestMethod.PUT)
+    @RequestHandler(path = "/func/", method = RequestMethod.PUT)
     public void handleFunctionPUT(final Request request) {
         handleFunction(request);
     }
