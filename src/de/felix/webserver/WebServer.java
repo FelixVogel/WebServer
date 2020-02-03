@@ -337,9 +337,9 @@ public class WebServer {
 	 */
 	public static void sendFile(final File file, final Response resp) throws IOException {
 		if(file.isFile() && file.exists()) {
-			final String mime = MimeType.getMimeType(file);
+			final MimeType mime = MimeType.getMimeType(file);
 
-			resp.setContentType(mime);
+			resp.setContentType(mime.getType());
 			resp.setStatus(200);
 
 			resp.setContentLengthLong(file.length());

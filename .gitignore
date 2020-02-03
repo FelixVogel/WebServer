@@ -1,5 +1,18 @@
-.idea/
-out/
-test/
+# Ignore Everything
+*
 
-*.iml
+# Except Subdirectories
+!/*
+
+# Except Directories
+!/src/**
+
+# Don't version MAINFEST
+/src/main/java/META-INF
+
+# Don't version .iml
+/*.iml
+
+# Except Files
+!/.gitignore
+
