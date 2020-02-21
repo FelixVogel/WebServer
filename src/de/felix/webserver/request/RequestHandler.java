@@ -17,7 +17,4 @@ public @interface RequestHandler {
 
 	RequestMethod method();
 
-	@Deprecated
-	String strategy() default "de.felix.webserver.auth.AAStrategy";
-
 }

@@ -1,22 +1,12 @@
 package de.felix.webserver;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletResponse;
-
 import de.felix.webserver.request.FunctionManager;
+import de.felix.webserver.request.MethodContainer;
+import de.felix.webserver.request.MethodExecServlet;
+import de.felix.webserver.request.PathHandler;
+import de.felix.webserver.request.RequestHandler;
+import de.felix.webserver.request.RequestMethod;
+import de.felix.webserver.request.Response;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.Connector;
@@ -34,13 +24,22 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
-import de.felix.webserver.auth.AuthenticationStrategy;
-import de.felix.webserver.request.MethodContainer;
-import de.felix.webserver.request.MethodExecServlet;
-import de.felix.webserver.request.PathHandler;
-import de.felix.webserver.request.RequestHandler;
-import de.felix.webserver.request.RequestMethod;
-import de.felix.webserver.request.Response;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * The {@link WebServer}
@@ -80,9 +79,10 @@ public class WebServer {
 			return;
 		}
 
+		registerHandlers(new FunctionManager(config.functionPath));
+
 		running = true;
 
-		registerHandlers(new FunctionManager(config.functionPath));
 		createServer();
 
 		try {
@@ -95,7 +95,6 @@ public class WebServer {
 	}
 
 	private void createServer() {
-
 		final boolean hasHTTPSConfigured = config.httpsPort > 0 &&
 				config.sslFile != null &&
 				config.sslFile.isEmpty();
@@ -171,8 +170,6 @@ public class WebServer {
 
 		final GzipHandler gzip = new GzipHandler();
 
-		server.setHandler(gzip);
-
 		final HandlerCollection handlers = new HandlerCollection();
 
 		if(hasHTTPSConfigured) {
@@ -198,11 +195,11 @@ public class WebServer {
 
 		final RewriteHandler rewrite = new RewriteHandler();
 
-		rewrite.setHandler(server.getHandler());
+		gzip.setHandler(handlers);
+
+		rewrite.setHandler(gzip);
 
 		server.setHandler(rewrite);
-
-		gzip.setHandler(handlers);
 
 		server.setStopAtShutdown(true);
 
@@ -296,20 +293,12 @@ public class WebServer {
 			if(sorted.get(pathSpec) == null) {
 				sorted.put(pathSpec, Util.initMethodMap());
 
-				System.err.println("[WS] Init: `" + pathSpec + "`");
+				System.err.println("[WS] Init: " + pathSpec);
 			}
 
-			AuthenticationStrategy authenticationStrategy = null;
+			System.err.println("[WS] Add: " + rh.method() + " ~ " + pathSpec);
 
-			try {
-				authenticationStrategy = (AuthenticationStrategy)Class.forName(rh.strategy()).getDeclaredConstructor().newInstance();
-			} catch(final Exception e) {
-				e.printStackTrace();
-			}
-
-			sorted.get(pathSpec).get(rh.method()).add(new MethodContainer(handlerContainer, m, authenticationStrategy));
-
-			// registerHandler(new ServletHolder(mes), handlerContainer.setPathPrefix() + rh.path());
+			sorted.get(pathSpec).get(rh.method()).add(new MethodContainer(handlerContainer, m));
 		}
 
 		for(final Entry<String, Map<RequestMethod, List<MethodContainer>>> entry : sorted.entrySet()) {
