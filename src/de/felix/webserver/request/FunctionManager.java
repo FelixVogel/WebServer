@@ -37,36 +37,36 @@ public final class FunctionManager implements PathHandler {
 
     @Override
     public String setPathPrefix() {
-        return "";
+        return "/func";
     }
 
-    @RequestHandler(path = "/func", method = RequestMethod.DELETE)
+    @RequestHandler(path = "", method = RequestMethod.DELETE)
     public void handleFunctionDELETE(final Request request) {
         handleFunction(request);
     }
 
 
-    @RequestHandler(path = "/func", method = RequestMethod.GET)
+    @RequestHandler(path = "", method = RequestMethod.GET)
     public void handleFunctionGET(final Request request) {
         handleFunction(request);
     }
 
-    @RequestHandler(path = "/func", method = RequestMethod.HEAD)
+    @RequestHandler(path = "", method = RequestMethod.HEAD)
     public void handleFunctionHEAD(final Request request) {
         handleFunction(request);
     }
 
-    @RequestHandler(path = "/func", method = RequestMethod.OPTION)
+    @RequestHandler(path = "", method = RequestMethod.OPTION)
     public void handleFunctionOPTION(final Request request) {
         handleFunction(request);
     }
 
-    @RequestHandler(path = "/func/", method = RequestMethod.POST)
+    @RequestHandler(path = "/", method = RequestMethod.POST)
     public void handleFunctionPOST(final Request request) {
         handleFunction(request);
     }
 
-    @RequestHandler(path = "/func/", method = RequestMethod.PUT)
+    @RequestHandler(path = "/", method = RequestMethod.PUT)
     public void handleFunctionPUT(final Request request) {
         handleFunction(request);
     }

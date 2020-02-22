@@ -7,6 +7,7 @@ import de.felix.webserver.request.PathHandler;
 import de.felix.webserver.request.RequestHandler;
 import de.felix.webserver.request.RequestMethod;
 import de.felix.webserver.request.Response;
+import de.felix.webserver.request.Router;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.Connector;
@@ -52,6 +53,41 @@ public class WebServer {
         new WebServer().start();
     }
 
+    /**
+     * Send a {@link File}
+     *
+     * @param path The path of the {@link File}
+     * @param resp The {@link HttpServletResponse} to send the {@link File} to
+     * @throws IOException {@link IOException} of the {@link HttpServletResponse}
+     */
+    public static void sendFile(final String path, final Response resp) throws IOException {
+        sendFile(new File(path), resp);
+    }
+
+    /**
+     * Send a {@link File}
+     *
+     * @param file The {@link File} to send
+     * @param resp The {@link HttpServletResponse} to send the {@link File} to
+     * @throws IOException {@link IOException} of the {@link HttpServletResponse}
+     */
+    public static void sendFile(final File file, final Response resp) throws IOException {
+        if (file.isFile() && file.exists()) {
+            final MimeType mime = MimeType.getMimeType(file);
+
+            resp.setContentType(mime.getType());
+            resp.setStatus(200);
+
+            resp.setContentLengthLong(file.length());
+
+            Files.copy(file.toPath(), resp.getOutputStream());
+        } else {
+            resp.setStatus(404);
+        }
+    }
+
+    // Class
+
     private final Server server;
     private final Configuration config;
     private final Map<String, List<ServletHolder>> servlets = new HashMap<>();
@@ -79,6 +115,7 @@ public class WebServer {
             return;
         }
 
+        registerHandlers(new Router());
         registerHandlers(new FunctionManager());
 
         running = true;
@@ -303,39 +340,6 @@ public class WebServer {
 
         for (final Entry<String, Map<RequestMethod, List<MethodContainer>>> entry : sorted.entrySet()) {
             registerServlet(entry.getKey(), new MethodExecServlet(entry.getValue()));
-        }
-    }
-
-    /**
-     * Send a {@link File}
-     *
-     * @param path The path of the {@link File}
-     * @param resp The {@link HttpServletResponse} to send the {@link File} to
-     * @throws IOException {@link IOException} of the {@link HttpServletResponse}
-     */
-    public static void sendFile(final String path, final Response resp) throws IOException {
-        sendFile(new File(path), resp);
-    }
-
-    /**
-     * Send a {@link File}
-     *
-     * @param file The {@link File} to send
-     * @param resp The {@link HttpServletResponse} to send the {@link File} to
-     * @throws IOException {@link IOException} of the {@link HttpServletResponse}
-     */
-    public static void sendFile(final File file, final Response resp) throws IOException {
-        if (file.isFile() && file.exists()) {
-            final MimeType mime = MimeType.getMimeType(file);
-
-            resp.setContentType(mime.getType());
-            resp.setStatus(200);
-
-            resp.setContentLengthLong(file.length());
-
-            Files.copy(file.toPath(), resp.getOutputStream());
-        } else {
-            resp.setStatus(404);
         }
     }
 
