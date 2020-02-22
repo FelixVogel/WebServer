@@ -1,5 +1,7 @@
 package de.felix.webserver.request;
 
+import de.felix.script.FunctionEngine;
+
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -17,7 +19,7 @@ import java.util.Map;
 public final class FunctionManager implements PathHandler {
 
     private static final Map<String, Function> FUNCTIONS = new HashMap<>();
-    private static final Map<String, ScriptCache> SCRIPT_CACHE = new HashMap<>();
+    private static final Map<String, FunctionEngine> SCRIPT_CACHE = new HashMap<>();
 
     public static void registerFunction(final String name, final Function function) {
         if (FUNCTIONS.containsKey(name)) {
@@ -32,12 +34,6 @@ public final class FunctionManager implements PathHandler {
     }
 
     // Class
-
-    private final ScriptEngine engine;
-
-    public FunctionManager() {
-        this.engine = new ScriptEngineManager().getEngineByName("nashorn");
-    }
 
     @Override
     public String setPathPrefix() {
@@ -83,35 +79,18 @@ public final class FunctionManager implements PathHandler {
                 final String path = "scripts/" + name + ".js";
                 final File sf = new File(path);
 
-                ScriptCache sc = null;
+                FunctionEngine functionEngine = null;
 
                 if (SCRIPT_CACHE.containsKey(path)) {
-                    sc = SCRIPT_CACHE.get(path);
-
-                    if (sf.lastModified() != sc.lastMod) {
-                        System.err.println("Reloaded script: " + path);
-                        sc = new ScriptCache(sf);
-                        SCRIPT_CACHE.put(path, sc);
-                    }
+                    functionEngine = SCRIPT_CACHE.get(path);
                 } else {
-                    System.err.println("Loaded script: " + path);
-                    sc = new ScriptCache(sf);
-                    SCRIPT_CACHE.put(path, sc);
+                    functionEngine = new FunctionEngine(new File(path));
+                    SCRIPT_CACHE.put(path, functionEngine);
                 }
 
-                try {
-                    engine.eval(sc.script);
-                } catch (ScriptException e) {
-                    request.getResponse().setStatus(500);
-                }
+                functionEngine.reload();
 
-                final Invocable invocable = (Invocable) engine;
-
-                try {
-                    invocable.invokeFunction("handleRequest", request);
-                } catch (ScriptException | NoSuchMethodException e) {
-                    request.getResponse().setStatus(500);
-                }
+                functionEngine.callFunction("handleRequest", request);
             } else {
                 final Function func = get(name);
 
@@ -128,33 +107,6 @@ public final class FunctionManager implements PathHandler {
         } else {
             request.getResponse().setStatus(404);
         }
-    }
-
-    static class ScriptCache {
-
-        private final String script;
-        private final long lastMod;
-
-        public ScriptCache(final File file) {
-            this.lastMod = file.lastModified();
-            this.script = read(file);
-        }
-
-        private String read(final File file) {
-            StringBuilder content = new StringBuilder();
-
-            try (final FileReader fr = new FileReader(file)) {
-                int c;
-                while ((c = fr.read()) != -1) {
-                    content.append((char) c);
-                }
-            } catch (final IOException e) {
-                e.printStackTrace();
-            }
-
-            return content.toString();
-        }
-
     }
 
 }
