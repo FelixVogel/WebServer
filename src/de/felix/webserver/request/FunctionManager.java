@@ -33,17 +33,15 @@ public final class FunctionManager implements PathHandler {
 
     // Class
 
-    private final String path;
     private final ScriptEngine engine;
 
-    public FunctionManager(final String path) {
-        this.path = path;
+    public FunctionManager() {
         this.engine = new ScriptEngineManager().getEngineByName("nashorn");
     }
 
     @Override
     public String setPathPrefix() {
-        return path;
+        return "";
     }
 
     @RequestHandler(path = "/func", method = RequestMethod.DELETE)
@@ -134,8 +132,8 @@ public final class FunctionManager implements PathHandler {
 
     static class ScriptCache {
 
-        private String script;
-        private long lastMod = 0;
+        private final String script;
+        private final long lastMod;
 
         public ScriptCache(final File file) {
             this.lastMod = file.lastModified();

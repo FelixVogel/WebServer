@@ -8,20 +8,20 @@ import java.lang.reflect.Method;
  */
 public class MethodContainer {
 
-	private final Object caller;
-	private final Method method;
+    private final Object caller;
+    private final Method method;
 
-	public MethodContainer(final Object caller, final Method method) {
-		this.caller = caller;
-		this.method = method;
-	}
+    public MethodContainer(final Object caller, final Method method) {
+        this.caller = caller;
+        this.method = method;
+    }
 
-	public void call(final Request request) {
-		try {
-			method.invoke(caller, request);
-		} catch(final IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-	}
+    public void call(final Request request) {
+        try {
+            method.invoke(caller, request);
+        } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

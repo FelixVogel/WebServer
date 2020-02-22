@@ -7,8 +7,8 @@
 # Except Directories
 !/src/**
 
-# Don't version MAINFEST
-/src/main/java/META-INF
+# Don't version MANIFEST.MF
+MANIFEST.MF
 
 # Don't version .iml
 /*.iml

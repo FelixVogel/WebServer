@@ -30,140 +30,140 @@ import javax.servlet.http.Part;
  */
 public interface Request {
 
-	boolean authenticate(HttpServletResponse resp) throws IOException, ServletException;
+    boolean authenticate(HttpServletResponse resp) throws IOException, ServletException;
 
-	String changeSessionId();
+    String changeSessionId();
 
-	String getAuthType();
+    String getAuthType();
 
-	String getContextPath();
+    String getContextPath();
 
-	Cookie[] getCookies();
+    Cookie[] getCookies();
 
-	long getDateHeader(String name);
+    long getDateHeader(final String name);
 
-	String getHeader(String name);
+    String getHeader(final String name);
 
-	int getIntHeader(String name);
+    int getIntHeader(final String name);
 
-	Enumeration<String> getHeaderNames();
+    Enumeration<String> getHeaderNames();
 
-	Enumeration<String> getHeaders(String name);
+    Enumeration<String> getHeaders(final String name);
 
-	RequestMethod getMethod();
+    RequestMethod getMethod();
 
-	Part getPart(String name) throws IOException, ServletException;
+    Part getPart(final String name) throws IOException, ServletException;
 
-	Collection<Part> getParts() throws IOException, ServletException;
+    Collection<Part> getParts() throws IOException, ServletException;
 
-	String getPathInfo();
+    String getPathInfo();
 
-	String getPathTranslated();
+    String getPathTranslated();
 
-	String getQueryString();
+    String getQueryString();
 
-	String getRemoteUser();
+    String getRemoteUser();
 
-	String getRequestURI();
+    String getRequestURI();
 
-	StringBuffer getRequestURL();
+    StringBuffer getRequestURL();
 
-	String getRequestedSessionId();
+    String getRequestedSessionId();
 
-	String getServletPath();
+    String getServletPath();
 
-	HttpSession getSession();
+    HttpSession getSession();
 
-	HttpSession getSession(boolean create);
+    HttpSession getSession(final boolean create);
 
-	Principal getUserPrincipal();
+    Principal getUserPrincipal();
 
-	boolean isRequestedSessionIdFromCookie();
+    boolean isRequestedSessionIdFromCookie();
 
-	boolean isRequestedSessionIdFromURL();
+    boolean isRequestedSessionIdFromURL();
 
-	boolean isRequestedSessionIdValid();
+    boolean isRequestedSessionIdValid();
 
-	boolean isUserInRole(String role);
+    boolean isUserInRole(final String role);
 
-	void login(String user, String password) throws ServletException;
+    void login(final String user, final String password) throws ServletException;
 
-	void logout() throws ServletException;
+    void logout() throws ServletException;
 
-	<T extends HttpUpgradeHandler> T upgrade(Class<T> arg0) throws IOException, ServletException;
+    <T extends HttpUpgradeHandler> T upgrade(final Class<T> arg0) throws IOException, ServletException;
 
-	AsyncContext getAsyncContext();
+    AsyncContext getAsyncContext();
 
-	Object getAttribute(String name);
+    Object getAttribute(final String name);
 
-	Enumeration<String> getAttributeNames();
+    Enumeration<String> getAttributeNames();
 
-	String getCharacterEncoding();
+    String getCharacterEncoding();
 
-	int getContentLength();
+    int getContentLength();
 
-	long getContentLengthLong();
+    long getContentLengthLong();
 
-	String getContentType();
+    String getContentType();
 
-	DispatcherType getDispatcherType();
+    DispatcherType getDispatcherType();
 
-	ServletInputStream getInputStream() throws IOException;
+    ServletInputStream getInputStream() throws IOException;
 
-	String getLocalAddr();
+    String getLocalAddr();
 
-	String getLocalName();
+    String getLocalName();
 
-	int getLocalPort();
+    int getLocalPort();
 
-	Locale getLocale();
+    Locale getLocale();
 
-	Enumeration<Locale> getLocales();
+    Enumeration<Locale> getLocales();
 
-	String getParameter(String name);
+    String getParameter(final String name);
 
-	Map<String, String[]> getParameterMap();
+    Map<String, String[]> getParameterMap();
 
-	Enumeration<String> getParameterNames();
+    Enumeration<String> getParameterNames();
 
-	String[] getParameterValues(String names);
+    String[] getParameterValues(final String names);
 
-	String getProtocol();
+    String getProtocol();
 
-	BufferedReader getReader() throws IOException;
+    BufferedReader getReader() throws IOException;
 
-	String getRemoteAddr();
+    String getRemoteAddr();
 
-	String getRemoteHost();
+    String getRemoteHost();
 
-	int getRemotePort();
+    int getRemotePort();
 
-	RequestDispatcher getRequestDispatcher(String name);
+    RequestDispatcher getRequestDispatcher(final String name);
 
-	Response getResponse();
+    Response getResponse();
 
-	String getScheme();
+    String getScheme();
 
-	String getServerName();
+    String getServerName();
 
-	int getServerPort();
+    int getServerPort();
 
-	ServletContext getServletContext();
+    ServletContext getServletContext();
 
-	boolean isAsyncStarted();
+    boolean isAsyncStarted();
 
-	boolean isAsyncSupported();
+    boolean isAsyncSupported();
 
-	boolean isSecure();
+    boolean isSecure();
 
-	void removeAttribute(String name);
+    void removeAttribute(final String name);
 
-	void setAttribute(String name, Object value);
+    void setAttribute(final String name, final Object value);
 
-	void setCharacterEncoding(String encoding) throws UnsupportedEncodingException;
+    void setCharacterEncoding(final String encoding) throws UnsupportedEncodingException;
 
-	AsyncContext startAsync() throws IllegalStateException;
+    AsyncContext startAsync() throws IllegalStateException;
 
-	AsyncContext startAsync(ServletRequest req, ServletResponse resp) throws IllegalStateException;
+    AsyncContext startAsync(final ServletRequest req, final ServletResponse resp) throws IllegalStateException;
 
 }
