@@ -16,64 +16,64 @@ import javax.servlet.http.Cookie;
  */
 public interface Response {
 
-	void addCookie(Cookie cookie);
+    void addCookie(Cookie cookie);
 
-	void addDateHeader(String name, long time);
+    void addDateHeader(String name, long time);
 
-	void addHeader(String name, String value);
+    void addHeader(String name, String value);
 
-	void addIntHeader(String name, int value);
+    void addIntHeader(String name, int value);
 
-	boolean containsHeader(String name);
+    boolean containsHeader(String name);
 
-	String encodeRedirectURL(String url);
+    String encodeRedirectURL(String url);
 
-	String encodeURL(String url);
+    String encodeURL(String url);
 
-	Collection<String> getHeaderNames();
+    Collection<String> getHeaderNames();
 
-	Collection<String> getHeaders(String name);
+    Collection<String> getHeaders(String name);
 
-	int getStatus();
+    int getStatus();
 
-	void sendError(int code) throws IOException;
+    void sendError(int code) throws IOException;
 
-	void sendError(int code, String message) throws IOException;
+    void sendError(int code, String message) throws IOException;
 
-	void sendRedirect(String redirect) throws IOException;
+    void sendRedirect(String redirect) throws IOException;
 
-	void setDateHeader(String name, long time);
+    void setDateHeader(String name, long time);
 
-	void setHeader(String name, String value);
+    void setHeader(String name, String value);
 
-	void setIntHeader(String name, int value);
+    void setIntHeader(String name, int value);
 
-	void setStatus(int code);
+    void setStatus(int code);
 
-	void flushBuffer() throws IOException;
+    void flushBuffer() throws IOException;
 
-	int getBufferSize();
+    int getBufferSize();
 
-	ServletOutputStream getOutputStream() throws IOException;
+    ServletOutputStream getOutputStream() throws IOException;
 
-	PrintWriter getWriter() throws IOException;
+    PrintWriter getWriter() throws IOException;
 
-	boolean isCommitted();
+    boolean isCommitted();
 
-	void reset();
+    void reset();
 
-	void resetBuffer();
+    void resetBuffer();
 
-	void setBufferSize(int size);
+    void setBufferSize(int size);
 
-	void setCharacterEncoding(String encoding) throws UnsupportedEncodingException;
+    void setCharacterEncoding(String encoding) throws UnsupportedEncodingException;
 
-	void setContentLength(int length);
+    void setContentLength(int length);
 
-	void setContentLengthLong(long length);
+    void setContentLengthLong(long length);
 
-	void setContentType(String type);
+    void setContentType(String type);
 
-	void setLocale(Locale locale);
+    void setLocale(Locale locale);
 
 }

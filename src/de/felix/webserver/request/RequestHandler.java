@@ -7,17 +7,18 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation marks a method as receiver of a HTTP request
+ *
  * @author Felix Vogel
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface RequestHandler {
 
-	String path();
+    String path();
 
-	RequestMethod method();
+    RequestMethod method();
 
-	@Deprecated
-	String strategy() default "de.felix.webserver.auth.AAStrategy";
+    @Deprecated
+    String strategy() default "de.felix.webserver.auth.AAStrategy";
 
 }

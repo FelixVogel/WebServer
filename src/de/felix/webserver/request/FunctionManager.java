@@ -40,7 +40,6 @@ public final class FunctionManager implements PathHandler {
         handleFunction(request);
     }
 
-
     @RequestHandler(path = "/func", method = RequestMethod.GET)
     public void handleFunctionGET(final Request request) {
         handleFunction(request);

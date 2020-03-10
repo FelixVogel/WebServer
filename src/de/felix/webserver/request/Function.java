@@ -1,7 +1,7 @@
 package de.felix.webserver.request;
 
 /**
- * THis represents a function that can be registered to the function path of the {@link de.felix.webserver.WebServer}
+ * This represents a function that can be registered to the function path of the {@link de.felix.webserver.WebServer}
  *
  * @author Felix Vogel
  */
