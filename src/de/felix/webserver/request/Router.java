@@ -46,10 +46,10 @@ public class Router implements PathHandler {
             path += (path.endsWith("/") ? "" : "/") + "index.html";
         }
 
-        System.out.println(path);
+        path = ("web/" + path).replace("//", "/");
 
         try {
-            WebServer.sendFile(new File("web/" + path), request.getResponse());
+            WebServer.sendFile(new File(path), request.getResponse());
         } catch (final IOException e) {
             e.printStackTrace();
         }

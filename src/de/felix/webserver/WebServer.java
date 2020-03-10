@@ -312,7 +312,7 @@ public class WebServer {
 
         @Override
         public void run() {
-            System.out.println("Stopping...");
+            System.err.println("[WS] Stopping...");
             server.stop();
         }
 
@@ -352,17 +352,25 @@ public class WebServer {
 
             if (sorted.get(pathSpec) == null) {
                 sorted.put(pathSpec, Util.initMethodMap());
-
-                System.err.println("[WS] Init: " + pathSpec);
             }
-
-            System.err.println("[WS] Add: " + rh.method() + " ~ " + pathSpec);
 
             sorted.get(pathSpec).get(rh.method()).add(new MethodContainer(handlerContainer, m));
         }
 
         for (final Entry<String, Map<RequestMethod, List<MethodContainer>>> entry : sorted.entrySet()) {
-            registerServlet(entry.getKey(), new MethodExecServlet(entry.getValue()));
+            final String key = entry.getKey();
+            final Map<RequestMethod, List<MethodContainer>> value = entry.getValue();
+
+            System.err.print("[WS] Register '" + key + "'");
+
+            final StringBuilder rmethods = new StringBuilder(" [");
+            value.forEach((mkey, mvalue) -> {
+                if (mvalue.size() > 0) rmethods.append(mkey + ", ");
+            });
+
+            System.err.println(rmethods.delete(rmethods.length() - 2, rmethods.length()).append("]").toString());
+
+            registerServlet(key, new MethodExecServlet(value));
         }
     }
 
