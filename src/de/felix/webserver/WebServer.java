@@ -7,6 +7,7 @@ import de.felix.webserver.request.PathHandler;
 import de.felix.webserver.request.RequestHandler;
 import de.felix.webserver.request.RequestMethod;
 import de.felix.webserver.request.Response;
+import de.felix.webserver.request.Router;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.Connector;
@@ -24,7 +25,9 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +52,41 @@ public class WebServer {
     public static void main(final String[] args) {
         new WebServer().start();
     }
+
+    /**
+     * Send a {@link File}
+     *
+     * @param path The path of the {@link File}
+     * @param resp The {@link HttpServletResponse} to send the {@link File} to
+     * @throws IOException {@link IOException} of the {@link HttpServletResponse}
+     */
+    public static void sendFile(final String path, final Response resp) throws IOException {
+        sendFile(new File(path), resp);
+    }
+
+    /**
+     * Send a {@link File}
+     *
+     * @param file The {@link File} to send
+     * @param resp The {@link HttpServletResponse} to send the {@link File} to
+     * @throws IOException {@link IOException} of the {@link HttpServletResponse}
+     */
+    public static void sendFile(final File file, final Response resp) throws IOException {
+        if (file.isFile() && file.exists()) {
+            final MimeType mime = MimeType.getMimeType(file);
+
+            resp.setContentType(mime.getType());
+            resp.setStatus(200);
+
+            resp.setContentLengthLong(file.length());
+
+            Files.copy(file.toPath(), resp.getOutputStream());
+        } else {
+            resp.setStatus(404);
+        }
+    }
+
+    // Class
 
     private final Server server;
     private final Configuration config;
@@ -77,9 +115,11 @@ public class WebServer {
             return;
         }
 
+        registerHandlers(new Router());
+        registerHandlers(new FunctionManager());
+
         running = true;
 
-        registerHandlers(new FunctionManager(config.functionPath));
         createServer();
 
         try {
@@ -92,7 +132,6 @@ public class WebServer {
     }
 
     private void createServer() {
-
         final boolean hasHTTPSConfigured = config.httpsPort > 0 &&
                 config.sslFile != null &&
                 config.sslFile.isEmpty();
@@ -168,8 +207,6 @@ public class WebServer {
 
         final GzipHandler gzip = new GzipHandler();
 
-        server.setHandler(gzip);
-
         final HandlerCollection handlers = new HandlerCollection();
 
         if (hasHTTPSConfigured) {
@@ -195,11 +232,11 @@ public class WebServer {
 
         final RewriteHandler rewrite = new RewriteHandler();
 
-        rewrite.setHandler(server.getHandler());
+        gzip.setHandler(handlers);
+
+        rewrite.setHandler(gzip);
 
         server.setHandler(rewrite);
-
-        gzip.setHandler(handlers);
 
         server.setStopAtShutdown(true);
 
@@ -293,8 +330,10 @@ public class WebServer {
             if (sorted.get(pathSpec) == null) {
                 sorted.put(pathSpec, Util.initMethodMap());
 
-                System.err.println("[WS] Init: `" + pathSpec + "`");
+                System.err.println("[WS] Init: " + pathSpec);
             }
+
+            System.err.println("[WS] Add: " + rh.method() + " ~ " + pathSpec);
 
             sorted.get(pathSpec).get(rh.method()).add(new MethodContainer(handlerContainer, m));
         }
@@ -304,43 +343,10 @@ public class WebServer {
         }
     }
 
-    /**
-     * Send a {@link File}
-     *
-     * @param path The path of the {@link File}
-     * @param resp The {@link HttpServletResponse} to send the {@link File} to
-     * @throws IOException {@link IOException} of the {@link HttpServletResponse}
-     */
-    public static void sendFile(final String path, final Response resp) throws IOException {
-        sendFile(new File(path), resp);
-    }
-
-    /**
-     * Send a {@link File}
-     *
-     * @param file The {@link File} to send
-     * @param resp The {@link HttpServletResponse} to send the {@link File} to
-     * @throws IOException {@link IOException} of the {@link HttpServletResponse}
-     */
-    public static void sendFile(final File file, final Response resp) throws IOException {
-        if (file.isFile() && file.exists()) {
-            final MimeType mime = MimeType.getMimeType(file);
-
-            resp.setContentType(mime.getType());
-            resp.setStatus(200);
-
-            resp.setContentLengthLong(file.length());
-
-            Files.copy(file.toPath(), resp.getOutputStream());
-        } else {
-            resp.setStatus(404);
-        }
-    }
-
     public static final class Configuration {
 
         int timeout = 15, httpPort = 80, httpsPort = 443;
-        String functionPath = "", sslFile, keystorepass, keymanagerpass, truststorepass;
+        String sslFile, keystorepass, keymanagerpass, truststorepass;
 
         public void setTimeout(final int timeout) {
             this.timeout = timeout;
@@ -352,10 +358,6 @@ public class WebServer {
 
         public void setHttpsPort(final int httpsPort) {
             this.httpsPort = httpsPort;
-        }
-
-        public void setFunctionPath(final String functionPath) {
-            this.functionPath = functionPath;
         }
 
         public void setSSLFileLocation(final String sslFile) {

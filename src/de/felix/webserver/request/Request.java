@@ -40,19 +40,19 @@ public interface Request {
 
     Cookie[] getCookies();
 
-    long getDateHeader(String name);
+    long getDateHeader(final String name);
 
-    String getHeader(String name);
+    String getHeader(final String name);
 
-    int getIntHeader(String name);
+    int getIntHeader(final String name);
 
     Enumeration<String> getHeaderNames();
 
-    Enumeration<String> getHeaders(String name);
+    Enumeration<String> getHeaders(final String name);
 
     RequestMethod getMethod();
 
-    Part getPart(String name) throws IOException, ServletException;
+    Part getPart(final String name) throws IOException, ServletException;
 
     Collection<Part> getParts() throws IOException, ServletException;
 
@@ -74,7 +74,7 @@ public interface Request {
 
     HttpSession getSession();
 
-    HttpSession getSession(boolean create);
+    HttpSession getSession(final boolean create);
 
     Principal getUserPrincipal();
 
@@ -84,17 +84,17 @@ public interface Request {
 
     boolean isRequestedSessionIdValid();
 
-    boolean isUserInRole(String role);
+    boolean isUserInRole(final String role);
 
-    void login(String user, String password) throws ServletException;
+    void login(final String user, final String password) throws ServletException;
 
     void logout() throws ServletException;
 
-    <T extends HttpUpgradeHandler> T upgrade(Class<T> arg0) throws IOException, ServletException;
+    <T extends HttpUpgradeHandler> T upgrade(final Class<T> arg0) throws IOException, ServletException;
 
     AsyncContext getAsyncContext();
 
-    Object getAttribute(String name);
+    Object getAttribute(final String name);
 
     Enumeration<String> getAttributeNames();
 
@@ -120,13 +120,13 @@ public interface Request {
 
     Enumeration<Locale> getLocales();
 
-    String getParameter(String name);
+    String getParameter(final String name);
 
     Map<String, String[]> getParameterMap();
 
     Enumeration<String> getParameterNames();
 
-    String[] getParameterValues(String names);
+    String[] getParameterValues(final String names);
 
     String getProtocol();
 
@@ -138,7 +138,7 @@ public interface Request {
 
     int getRemotePort();
 
-    RequestDispatcher getRequestDispatcher(String name);
+    RequestDispatcher getRequestDispatcher(final String name);
 
     Response getResponse();
 
@@ -156,14 +156,14 @@ public interface Request {
 
     boolean isSecure();
 
-    void removeAttribute(String name);
+    void removeAttribute(final String name);
 
-    void setAttribute(String name, Object value);
+    void setAttribute(final String name, final Object value);
 
-    void setCharacterEncoding(String encoding) throws UnsupportedEncodingException;
+    void setCharacterEncoding(final String encoding) throws UnsupportedEncodingException;
 
     AsyncContext startAsync() throws IllegalStateException;
 
-    AsyncContext startAsync(ServletRequest req, ServletResponse resp) throws IllegalStateException;
+    AsyncContext startAsync(final ServletRequest req, final ServletResponse resp) throws IllegalStateException;
 
 }

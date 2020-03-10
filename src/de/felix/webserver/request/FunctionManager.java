@@ -1,5 +1,15 @@
 package de.felix.webserver.request;
 
+import de.felix.script.FunctionEngine;
+
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,6 +19,7 @@ import java.util.Map;
 public final class FunctionManager implements PathHandler {
 
     private static final Map<String, Function> FUNCTIONS = new HashMap<>();
+    private static final Map<String, FunctionEngine> SCRIPT_CACHE = new HashMap<>();
 
     public static void registerFunction(final String name, final Function function) {
         if (FUNCTIONS.containsKey(name)) {
@@ -24,43 +35,38 @@ public final class FunctionManager implements PathHandler {
 
     // Class
 
-    private final String path;
-
-    public FunctionManager(final String path) {
-        this.path = path;
-    }
-
     @Override
     public String setPathPrefix() {
-        return path;
+        return "/func";
     }
 
-    @RequestHandler(path = "/func", method = RequestMethod.DELETE)
+    @RequestHandler(path = "", method = RequestMethod.DELETE)
     public void handleFunctionDELETE(final Request request) {
         handleFunction(request);
     }
 
-    @RequestHandler(path = "/func", method = RequestMethod.GET)
+
+    @RequestHandler(path = "", method = RequestMethod.GET)
     public void handleFunctionGET(final Request request) {
         handleFunction(request);
     }
 
-    @RequestHandler(path = "/func", method = RequestMethod.HEAD)
+    @RequestHandler(path = "", method = RequestMethod.HEAD)
     public void handleFunctionHEAD(final Request request) {
         handleFunction(request);
     }
 
-    @RequestHandler(path = "/func", method = RequestMethod.OPTION)
+    @RequestHandler(path = "", method = RequestMethod.OPTION)
     public void handleFunctionOPTION(final Request request) {
         handleFunction(request);
     }
 
-    @RequestHandler(path = "/func/", method = RequestMethod.POST)
+    @RequestHandler(path = "/", method = RequestMethod.POST)
     public void handleFunctionPOST(final Request request) {
         handleFunction(request);
     }
 
-    @RequestHandler(path = "/func/", method = RequestMethod.PUT)
+    @RequestHandler(path = "/", method = RequestMethod.PUT)
     public void handleFunctionPUT(final Request request) {
         handleFunction(request);
     }
@@ -69,17 +75,37 @@ public final class FunctionManager implements PathHandler {
         final String name = request.getParameter("name");
 
         if (name != null && !name.isEmpty()) {
-            final Function func = get(name);
+            if (name.startsWith("js")) {
+                final String path = "scripts/" + name + ".js";
+                final File sf = new File(path);
 
-            if (func != null) {
-                if (func.canExecute(request)) {
-                    func.execute(request);
+                FunctionEngine functionEngine = null;
+
+                if (SCRIPT_CACHE.containsKey(path)) {
+                    functionEngine = SCRIPT_CACHE.get(path);
                 } else {
-                    request.getResponse().setStatus(401);
+                    functionEngine = new FunctionEngine(new File(path));
+                    SCRIPT_CACHE.put(path, functionEngine);
                 }
+
+                functionEngine.reload();
+
+                functionEngine.callFunction("handleRequest", request);
             } else {
-                request.getResponse().setStatus(404);
+                final Function func = get(name);
+
+                if (func != null) {
+                    if (func.canExecute(request)) {
+                        func.execute(request);
+                    } else {
+                        request.getResponse().setStatus(401);
+                    }
+                } else {
+                    request.getResponse().setStatus(404);
+                }
             }
+        } else {
+            request.getResponse().setStatus(404);
         }
     }
 

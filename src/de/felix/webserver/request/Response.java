@@ -16,39 +16,39 @@ import javax.servlet.http.Cookie;
  */
 public interface Response {
 
-    void addCookie(Cookie cookie);
+    void addCookie(final Cookie cookie);
 
-    void addDateHeader(String name, long time);
+    void addDateHeader(final String name, final long time);
 
-    void addHeader(String name, String value);
+    void addHeader(final String name, final String value);
 
-    void addIntHeader(String name, int value);
+    void addIntHeader(final String name, final int value);
 
-    boolean containsHeader(String name);
+    boolean containsHeader(final String name);
 
-    String encodeRedirectURL(String url);
+    String encodeRedirectURL(final String url);
 
-    String encodeURL(String url);
+    String encodeURL(final String url);
 
     Collection<String> getHeaderNames();
 
-    Collection<String> getHeaders(String name);
+    Collection<String> getHeaders(final String name);
 
     int getStatus();
 
-    void sendError(int code) throws IOException;
+    void sendError(final int code) throws IOException;
 
-    void sendError(int code, String message) throws IOException;
+    void sendError(final int code, final String message) throws IOException;
 
-    void sendRedirect(String redirect) throws IOException;
+    void sendRedirect(final String redirect) throws IOException;
 
-    void setDateHeader(String name, long time);
+    void setDateHeader(final String name, long time);
 
-    void setHeader(String name, String value);
+    void setHeader(final String name, final String value);
 
-    void setIntHeader(String name, int value);
+    void setIntHeader(final String name, final int value);
 
-    void setStatus(int code);
+    void setStatus(final int code);
 
     void flushBuffer() throws IOException;
 
@@ -64,16 +64,16 @@ public interface Response {
 
     void resetBuffer();
 
-    void setBufferSize(int size);
+    void setBufferSize(final int size);
 
-    void setCharacterEncoding(String encoding) throws UnsupportedEncodingException;
+    void setCharacterEncoding(final String encoding);
 
-    void setContentLength(int length);
+    void setContentLength(final int length);
 
-    void setContentLengthLong(long length);
+    void setContentLengthLong(final long length);
 
-    void setContentType(String type);
+    void setContentType(final String type);
 
-    void setLocale(Locale locale);
+    void setLocale(final Locale locale);
 
 }

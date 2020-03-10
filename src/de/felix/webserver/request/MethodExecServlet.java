@@ -17,14 +17,12 @@ public class MethodExecServlet extends HttpServlet {
     private final MethodContainer[] delete, get, head, options, post, put;
 
     public MethodExecServlet(final Map<RequestMethod, List<MethodContainer>> sorted) {
-        // @formatter:off
-		this.delete  = sorted.get(RequestMethod.DELETE).toArray(new MethodContainer[0]);
-		this.get     = sorted.get(RequestMethod.GET).toArray(new MethodContainer[0]);
-		this.head    = sorted.get(RequestMethod.HEAD).toArray(new MethodContainer[0]);
-		this.options = sorted.get(RequestMethod.OPTION).toArray(new MethodContainer[0]);
-		this.post    = sorted.get(RequestMethod.POST).toArray(new MethodContainer[0]);
-		this.put     = sorted.get(RequestMethod.PUT).toArray(new MethodContainer[0]);
-		// @formatter:on
+        this.delete = sorted.get(RequestMethod.DELETE).toArray(MethodContainer[]::new);
+        this.get = sorted.get(RequestMethod.GET).toArray(MethodContainer[]::new);
+        this.head = sorted.get(RequestMethod.HEAD).toArray(MethodContainer[]::new);
+        this.options = sorted.get(RequestMethod.OPTION).toArray(MethodContainer[]::new);
+        this.post = sorted.get(RequestMethod.POST).toArray(MethodContainer[]::new);
+        this.put = sorted.get(RequestMethod.PUT).toArray(MethodContainer[]::new);
     }
 
     @Override
